@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,7 +9,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400;500;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
+  /* Dark theme (default) */
+  :root,
+  [data-theme="dark"] {
     --bg: #0a0a0b;
     --bg-elev: #131316;
     --fg: #e8e6e1;
@@ -19,6 +21,24 @@
     --accent-dim: #5a3d0a;
     --danger: #e85d4f;
     --safe: #6bb38a;
+    --grid-line: rgba(255,255,255,0.015);
+    --glow-a: rgba(245,166,35,0.06);
+    --glow-b: rgba(245,166,35,0.04);
+  }
+
+  [data-theme="light"] {
+    --bg: #f5f4f0;
+    --bg-elev: #ffffff;
+    --fg: #1a1917;
+    --fg-dim: #8a8780;
+    --fg-faint: #dddbd6;
+    --accent: #d4880e;
+    --accent-dim: #f5e4c0;
+    --danger: #c0392b;
+    --safe: #2e7d52;
+    --grid-line: rgba(0,0,0,0.04);
+    --glow-a: rgba(212,136,14,0.05);
+    --glow-b: rgba(212,136,14,0.03);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,12 +50,13 @@
     font-family: 'JetBrains Mono', monospace;
     font-feature-settings: "ss01", "ss02", "cv01";
     overflow: hidden;
+    transition: background 0.25s, color 0.25s;
   }
 
   body {
     background-image:
-      radial-gradient(circle at 20% 10%, rgba(245,166,35,0.06), transparent 50%),
-      radial-gradient(circle at 80% 90%, rgba(245,166,35,0.04), transparent 50%);
+      radial-gradient(circle at 20% 10%, var(--glow-a), transparent 50%),
+      radial-gradient(circle at 80% 90%, var(--glow-b), transparent 50%);
     background-attachment: fixed;
   }
 
@@ -44,8 +65,8 @@
     position: fixed;
     inset: 0;
     background-image:
-      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
     background-size: 32px 32px;
     pointer-events: none;
     z-index: 0;
@@ -80,6 +101,29 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0.4; }
   }
+
+  .topbar-actions { display: flex; gap: 8px; align-items: center; }
+
+  .theme-switcher {
+    display: flex;
+    border: 1px solid var(--fg-faint);
+    overflow: hidden;
+  }
+  .theme-btn {
+    background: none;
+    border: none;
+    color: var(--fg-dim);
+    padding: 5px 8px;
+    font-family: inherit;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-right: 1px solid var(--fg-faint);
+  }
+  .theme-btn:last-child { border-right: none; }
+  .theme-btn.active { background: var(--accent); color: var(--bg); }
+  .theme-btn:not(.active):hover { color: var(--accent); }
 
   .settings-btn {
     background: none;
@@ -117,6 +161,7 @@
     letter-spacing: -0.04em;
     font-variant-numeric: tabular-nums;
     color: var(--fg);
+    transition: color 0.3s;
   }
   .pct-value .sym {
     font-size: 0.4em;
@@ -150,6 +195,7 @@
     background: var(--bg-elev);
     border: 1px solid var(--fg-faint);
     border-radius: 4px;
+    transition: background 0.25s, border-color 0.25s;
   }
   .cd-unit { text-align: center; }
   .cd-num {
@@ -177,6 +223,7 @@
     padding: 12px 16px;
     background: var(--bg-elev);
     border-left: 2px solid var(--accent-dim);
+    transition: background 0.25s;
   }
   .meta-label {
     color: var(--fg-dim);
@@ -191,8 +238,40 @@
     font-variant-numeric: tabular-nums;
   }
 
+  /* Sleep window banner */
+  .sleep-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--bg-elev);
+    border: 1px solid var(--fg-faint);
+    border-left: 3px solid var(--fg-dim);
+    border-radius: 4px;
+    font-size: 10px;
+    color: var(--fg-dim);
+    letter-spacing: 0.05em;
+    line-height: 1.6;
+    transition: background 0.25s, border-color 0.25s;
+  }
+  .sleep-banner.active-now {
+    border-left-color: var(--safe);
+  }
+  .sleep-banner.sleep-now {
+    border-left-color: var(--accent-dim);
+  }
+  .sleep-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .sleep-title {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--fg);
+    font-weight: 500;
+    margin-bottom: 3px;
+  }
+
   .footer {
-    margin-top: 32px;
+    margin-top: 24px;
     font-size: 10px;
     color: var(--fg-dim);
     text-align: center;
@@ -210,6 +289,7 @@
     z-index: 100;
     padding: 24px;
   }
+  [data-theme="light"] .overlay { background: rgba(240,238,232,0.88); }
   .overlay.open { display: flex; }
   .panel {
     background: var(--bg-elev);
@@ -218,6 +298,7 @@
     width: 100%;
     max-width: 360px;
     border-radius: 4px;
+    transition: background 0.25s;
   }
   .panel h2 {
     font-size: 12px;
@@ -245,10 +326,18 @@
     padding: 10px 12px;
     font-family: inherit;
     font-size: 13px;
+    transition: background 0.25s, color 0.25s;
   }
   .field select:focus, .field input:focus {
     outline: none;
     border-color: var(--accent);
+  }
+  .field-hint {
+    font-size: 9px;
+    color: var(--fg-dim);
+    letter-spacing: 0.05em;
+    margin-top: 6px;
+    line-height: 1.5;
   }
   .btn-row { display: flex; gap: 8px; margin-top: 20px; }
   .btn {
@@ -283,12 +372,19 @@
       <span class="dot"></span>
       <span>Claude Usage Pacer</span>
     </div>
-    <button class="settings-btn" onclick="toggleSettings()">⚙ Settings</button>
+    <div class="topbar-actions">
+      <div class="theme-switcher" role="group" aria-label="Theme">
+        <button class="theme-btn" id="theme-system" onclick="setTheme('system')" title="Match system theme">SYS</button>
+        <button class="theme-btn" id="theme-dark"   onclick="setTheme('dark')"   title="Dark theme">DARK</button>
+        <button class="theme-btn" id="theme-light"  onclick="setTheme('light')"  title="Light theme">LIGHT</button>
+      </div>
+      <button class="settings-btn" onclick="toggleSettings()">⚙ Settings</button>
+    </div>
   </div>
 
   <main>
     <div class="pct-section">
-      <div class="pct-label">Expected usage <span id="active-tag" style="opacity:0.6"></span></div>
+      <div class="pct-label">Expected usage</div>
       <div class="pct-value"><span id="pct">0.00</span><span class="sym">%</span></div>
       <div class="progress-wrap">
         <div class="progress-bar" id="bar" style="width: 0%"></div>
@@ -310,6 +406,14 @@
       <div class="meta-item">
         <div class="meta-label">Day of cycle</div>
         <div class="meta-value" id="day-num">—</div>
+      </div>
+    </div>
+
+    <div class="sleep-banner" id="sleep-banner">
+      <div class="sleep-icon" id="sleep-icon">🌙</div>
+      <div>
+        <div class="sleep-title" id="sleep-title">Sleep window</div>
+        <div id="sleep-desc">—</div>
       </div>
     </div>
   </main>
@@ -340,16 +444,19 @@
       <label>Reset minute</label>
       <input type="number" id="set-minute" min="0" max="59" value="0" />
     </div>
-    <h2 style="margin-top:8px">Active Hours</h2>
+    <h2 style="margin-top:8px">Sleep / Inactive Window</h2>
     <div class="row">
       <div class="field">
-        <label>Start</label>
-        <input type="number" id="set-active-start" min="0" max="23" value="7" />
+        <label>Sleep from</label>
+        <input type="number" id="set-active-end" min="0" max="23" value="23" />
       </div>
       <div class="field">
-        <label>End</label>
-        <input type="number" id="set-active-end" min="1" max="24" value="23" />
+        <label>Wake at</label>
+        <input type="number" id="set-active-start" min="0" max="23" value="7" />
       </div>
+    </div>
+    <div class="field-hint">
+      During the sleep window the usage % counter pauses — time spent asleep is not counted toward your expected pace, so you won't appear to fall behind overnight.
     </div>
     <div class="btn-row">
       <button class="btn" onclick="toggleSettings()">Cancel</button>
@@ -362,6 +469,29 @@
   const DEFAULTS = { day: 3, hour: 9, minute: 0, activeStart: 7, activeEnd: 23 };
   let config = loadConfig();
 
+  // --- Theme ---
+  const THEME_KEY = 'pacer-theme';
+  let currentTheme = localStorage.getItem(THEME_KEY) || 'system';
+  applyTheme(currentTheme);
+
+  function applyTheme(t) {
+    currentTheme = t;
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const resolved = t === 'system' ? (prefersDark ? 'dark' : 'light') : t;
+    document.documentElement.setAttribute('data-theme', resolved);
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    const btn = document.getElementById('theme-' + t);
+    if (btn) btn.classList.add('active');
+    try { localStorage.setItem(THEME_KEY, t); } catch {}
+  }
+
+  function setTheme(t) { applyTheme(t); }
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (currentTheme === 'system') applyTheme('system');
+  });
+
+  // --- Config ---
   function loadConfig() {
     try {
       const saved = localStorage.getItem('pacer-config');
@@ -393,8 +523,6 @@
     return prev;
   }
 
-  // Sum of milliseconds within [start, end] that fall inside the daily
-  // active window [activeStart:00, activeEnd:00) local time.
   function activeMsBetween(start, end) {
     if (end <= start) return 0;
     const aS = config.activeStart, aE = config.activeEnd;
@@ -414,13 +542,15 @@
     return total;
   }
 
-  function fmtNum(n, pad = 2) {
-    return String(n).padStart(pad, '0');
-  }
+  function fmtNum(n, pad = 2) { return String(n).padStart(pad, '0'); }
 
   function fmtDate(d) {
-    const opts = { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    return d.toLocaleString(undefined, opts);
+    return d.toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function fmtHour(h) {
+    const d = new Date(); d.setHours(h, 0, 0, 0);
+    return d.toLocaleString(undefined, { hour: '2-digit', minute: '2-digit' });
   }
 
   function inActiveWindow(d) {
@@ -428,12 +558,40 @@
     return h >= config.activeStart && h < config.activeEnd;
   }
 
+  function updateSleepBanner(now) {
+    const banner = document.getElementById('sleep-banner');
+    const icon   = document.getElementById('sleep-icon');
+    const title  = document.getElementById('sleep-title');
+    const desc   = document.getElementById('sleep-desc');
+    const asleep = !inActiveWindow(now);
+    const sleepFrom = fmtHour(config.activeEnd);
+    const wakeAt    = fmtHour(config.activeStart);
+    const active    = config.activeEnd - config.activeStart;
+    const inactive  = 24 - active;
+
+    if (asleep) {
+      banner.className = 'sleep-banner sleep-now';
+      icon.textContent = '🌙';
+      title.textContent = 'Sleep window — counter paused';
+      desc.textContent =
+        `Usage % is not advancing right now (${sleepFrom}–${wakeAt}). ` +
+        `This ${inactive}h window is excluded so overnight idle time doesn't count against your pace.`;
+    } else {
+      banner.className = 'sleep-banner active-now';
+      icon.textContent = '⚡';
+      title.textContent = 'Active window — counter running';
+      desc.textContent =
+        `Counter runs ${wakeAt}–${sleepFrom} (${active}h/day). ` +
+        `Outside these hours the % freezes — adjust in Settings if your schedule differs.`;
+    }
+  }
+
   function tick() {
     const now = new Date();
     const next = getNextReset(now);
     const prev = getPrevReset(now);
 
-    const totalActive = activeMsBetween(prev, next);
+    const totalActive   = activeMsBetween(prev, next);
     const elapsedActive = activeMsBetween(prev, now);
     const pct = totalActive > 0
       ? Math.max(0, Math.min(100, (elapsedActive / totalActive) * 100))
@@ -441,27 +599,21 @@
 
     document.getElementById('pct').textContent = pct.toFixed(2);
     document.getElementById('bar').style.width = pct + '%';
-    document.getElementById('active-tag').textContent =
-      `(${fmtNum(config.activeStart)}:00–${fmtNum(config.activeEnd)}:00)`;
 
     const remaining = Math.max(0, next - now);
-    const days = Math.floor(remaining / 86400000);
-    const hours = Math.floor((remaining % 86400000) / 3600000);
-    const mins = Math.floor((remaining % 3600000) / 60000);
-    const secs = Math.floor((remaining % 60000) / 1000);
-
-    document.getElementById('d').textContent = days;
-    document.getElementById('h').textContent = fmtNum(hours);
-    document.getElementById('m').textContent = fmtNum(mins);
-    document.getElementById('s').textContent = fmtNum(secs);
+    document.getElementById('d').textContent = Math.floor(remaining / 86400000);
+    document.getElementById('h').textContent = fmtNum(Math.floor((remaining % 86400000) / 3600000));
+    document.getElementById('m').textContent = fmtNum(Math.floor((remaining % 3600000) / 60000));
+    document.getElementById('s').textContent = fmtNum(Math.floor((remaining % 60000) / 1000));
 
     document.getElementById('next-reset').textContent = fmtDate(next);
     const dayInCycle = Math.floor((now - prev) / 86400000) + 1;
-    const offHours = !inActiveWindow(now) ? ' • OFF-HOURS' : '';
-    document.getElementById('day-num').textContent = dayInCycle + ' / 7' + offHours;
+    document.getElementById('day-num').textContent = dayInCycle + ' / 7';
 
     document.getElementById('now-display').textContent =
       now.toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' }).toUpperCase();
+
+    updateSleepBanner(now);
   }
 
   function toggleSettings() {
@@ -476,11 +628,11 @@
 
   function saveSettings() {
     config = {
-      day: parseInt(document.getElementById('set-day').value),
-      hour: parseInt(document.getElementById('set-hour').value),
-      minute: parseInt(document.getElementById('set-minute').value),
+      day:         parseInt(document.getElementById('set-day').value),
+      hour:        parseInt(document.getElementById('set-hour').value),
+      minute:      parseInt(document.getElementById('set-minute').value),
       activeStart: parseInt(document.getElementById('set-active-start').value),
-      activeEnd: parseInt(document.getElementById('set-active-end').value),
+      activeEnd:   parseInt(document.getElementById('set-active-end').value),
     };
     saveConfig();
     toggleSettings();
